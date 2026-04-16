@@ -1,0 +1,146 @@
+\documentclass[11pt]{article}
+
+% Packages
+\usepackage{amsmath,amssymb,amsthm} % Math stuff
+\usepackage{enumitem} % For improved lists
+\usepackage{fancyhdr} % For headers
+\usepackage{geometry} % Page geometry
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{subcaption}
+\geometry{margin=1in}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{mathtools}
+\usepackage[colorlinks=true, 
+    linkcolor=blue, 
+    citecolor=blue, 
+    urlcolor=blue, 
+    filecolor=blue]{hyperref}
+
+% Header
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Asher Baraban, Matej Cerman \\ Martin Hiti}
+\chead{14.383}
+\rhead{Problem Set 1}
+\cfoot{\thepage}
+
+\newtheorem{theorem}{Theorem}[section]
+
+% For easier problem/solution environments
+\newenvironment{problem}[1]
+    {\bigskip\noindent\textbf{Problem #1.}\par\setlength{\parindent}{0pt}}
+    {\medskip}
+\newenvironment{solution}[1]
+    {\bigskip\noindent\textbf{Solution #1.} \par}
+    {\medskip}
+
+\newcommand\barbelow[1]{\stackunder[1.2pt]{$#1$}{\rule{.8ex}{.075ex}}}
+
+% Citations
+\usepackage{natbib}
+\bibliographystyle{unsrtnat}
+
+% Math shortcuts
+\newcommand{\ev}{\mathbb{E}}
+\newcommand{\evn}{\mathbb{E}_n}
+\newcommand{\R}{\mathbb{R}}
+
+% Title
+\title{Problem Set 1 \\ 14.383}
+\author{Asher Baraban, Matej Cerman, Martin Hiti}
+\date{\today}
+
+% Document
+\begin{document}
+
+
+\maketitle
+
+\noindent \textit{Notes}:
+\begin{itemize}
+    \item All code is in \url{https://github.com/ABaraban/14.383_pset4}
+    \item All three group members took 14.381 last semester
+\end{itemize}
+
+\subsection*{Chapter 9} 
+\begin{problem}{9.1 (Asher)}
+Implement standard panel data estimators (fixed effects, first
+differences, and GMM-FD2 approaches) for the first or third
+empirical example. These are implemented in standard software
+such as Stata or R. Very briefly explain the assumptions
+you need to make for these estimators to be consistent for
+causal effects, and why these assumptions may or may not
+hold in these examples. Very briefly explain how you are
+taking care of clustering.
+\end{problem}
+
+\begin{solution}{}
+Below, we implemented the Democracy example. For our estimates to be causal we need
+\[\epsilon_{it} \perp (X_i^t, a_i), X_i^t = (D_{it}, ..., D_{i1}, Y_{i(t-1)}, ..., Y_{i1})\]
+In words, democracy and past GDP are orthogonal to current and future GDP shocks. We also need the error terms to be serially uncorrelated conditional on sufficient lags of GDP. We are clustering by country 
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{rrrrrr}
+  \hline
+ & Pooled & FD & FE & GMM-FD1 & GMM-FD2 \\ 
+  \hline
+Democracy & 0.46 & 0.94 & 1.89 & 4.45 & 3.91 \\ 
+  CSE & 0.26 & 1.20 & 0.65 & 2.77 & 1.70 \\ 
+  BSE & 0.24 & 1.25 & 0.67 & 2.93 & 1.57 \\ 
+  L1.log(gdp) & 1.33 & 0.33 & 1.15 & 1.30 & 1.00 \\ 
+  CSE1 & 0.05 & 0.05 & 0.05 & 0.14 & 0.07 \\ 
+  BSE1 & 0.05 & 0.05 & 0.05 & 0.14 & 0.07 \\ 
+  L2.log(gdp) & -0.18 & 0.17 & -0.12 & -0.15 & -0.08 \\ 
+  CSE2 & 0.06 & 0.04 & 0.06 & 0.28 & 0.06 \\ 
+  BSE2 & 0.06 & 0.04 & 0.06 & 0.22 & 0.06 \\ 
+  L3.log(gdp) & -0.11 & 0.06 & -0.07 & -0.43 & -0.04 \\ 
+  CSE3 & 0.05 & 0.02 & 0.04 & 0.28 & 0.04 \\ 
+  BSE3 & 0.05 & 0.03 & 0.04 & 0.25 & 0.04 \\ 
+  L4.log(gdp) & -0.05 & -0.05 & -0.08 & 0.18 & -0.08 \\ 
+  CSE4 & 0.03 & 0.04 & 0.02 & 0.14 & 0.03 \\ 
+  BSE4 & 0.03 & 0.04 & 0.02 & 0.14 & 0.03 \\ 
+  LR-Democracy & 288.03 & 1.91 & 16.05 & 46.75 & 20.91 \\ 
+  CSE5 & 162.89 & 2.45 & 6.67 & 52.61 & 10.60 \\ 
+  BSE5 & 157.69 & 2.54 & 6.44 & 36.11 & 9.16 \\ 
+  J-test &  &  &  & 70.71 & 130.23 \\ 
+  p-val &  &  &  & 0.00 & 1.00 \\ 
+  dof &  &  &  & 31.00 & 463.00 \\ 
+   \hline
+\end{tabular}
+\end{table}
+\end{solution}
+
+\newpage
+
+\subsection*{Chapter 10}
+
+
+\begin{problem}{10.1 ()}
+Explain how the bias can arise in high dimensional problems
+using a simple example.
+\end{problem}
+
+\begin{solution}{}
+
+\end{solution}
+
+
+
+\begin{problem}{10.2 }
+Replicate (approximately) the empirical results of Table 10.1
+using standard software such as R or Stata. [Note that you
+will not be able to replicate exactly the split-sample bias corrections
+and bootstrap standard errors because they depend
+on the software and random seed used.]
+\end{problem}
+
+\begin{solution}{}
+
+\end{solution}
+
+
+
+\end{document}
