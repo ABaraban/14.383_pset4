@@ -81,7 +81,7 @@ cse.lr.ah <- sqrt(t(jac.lr) %*% HCV.coefs[1:5,1:5] %*% jac.lr);
 
 ## Split sample bias correction (1 partition)
 
-set.seed(14383);
+set.seed(383);
 S1         <- 1;
 N         <- length(levels(id));
 acoeff.ah <- 0*coef(ah.fit);
@@ -267,7 +267,7 @@ library(boot); # library to do bootstrap with paralell computing
 
 
 result.boot.SE <- boot(data = data, statistic=boot.SE, sim = "parametric", ran.gen = data.rg, mle = 0, form.fe = form.fe, form.ah = form.ah, 
-                       form.ab = form.ab, parallel="multicore", ncpus = 20, R=R);
+                       form.ab = form.ab, parallel="multicore", ncpus = 16, R=R);
 
 
 rsd <- function(x) { return((quantile(x,.75,na.rm=TRUE)-quantile(x,.25,na.rm=TRUE))/(qnorm(.75) - qnorm(.25)))} # robust estimator of std deviation based on IQR
