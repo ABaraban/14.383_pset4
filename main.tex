@@ -118,13 +118,74 @@ Democracy & 0.46 & 0.94 & 1.89 & 4.45 & 3.91 \\
 \subsection*{Chapter 10}
 
 
-\begin{problem}{10.1 ()}
-Explain how the bias can arise in high dimensional problems
-using a simple example.
+\begin{problem}{10.1 (Martin)}
+Explain how the bias can arise in high dimensional problems using a simple example.
 \end{problem}
 
-\begin{solution}{}
+\begin{solution}{10.1}
+Under standard low/fixed dimensional GMM, we have shown that the difference between out estimated parameter and the true value of the parameter is of order $1/\sqrt{n},$ which vanishes as $n \to \infty.$ However, when the problem becomes high dimensional---either because the dimensionality of the parameter is high or the number of moments is high---we are not always guaranteed such consistency.
 
+To see this, we present a contrived example that shows how bias can arrive in high dimensional problems. Partition the parameter vector in to a target parameter $\alpha$ and a high dimensional nuisance parameter $\gamma$:
+\begin{align*}
+    \theta = (\alpha', \gamma')' \qquad \theta_0 = (\alpha'_0, \gamma'_0)'
+\end{align*}
+where subscripts. We approximate the case with a high dimensional nuisance parameter as $p = \dim(\gamma) \to \infty $ as $n\to \infty$ but a fixed dimension for the target parmeter $d_\alpha = \dim(\alpha).$
+
+Now, suppose that we are interested in the target parameter is $\alpha = \gamma'\gamma$ which is one dimensional ($d_{\alpha} = 1)$ and that the true value satisfies $\alpha_0 = \gamma_0'\gamma_0 = 1.$ Suppose that we have an estimator $\hat{\gamma}$ of $\gamma_0$ that satisfies
+\begin{align*}
+    G_n \coloneq \hat{\gamma} - \gamma_0 \sim \mathcal{N}(0,I_p/n)
+\end{align*}
+That is, the estimation error in each component of $\hat{\gamma}$ is mean zero, independent, and of order $1/\sqrt{n}$ (so it goes to 0 as $n \to \infty$). Consider the plug-in estimator of $\alpha_0$: $\hat{\alpha} = \hat{\gamma}'\hat{\gamma}.$ This estimator obeys an exact Taylor expansion
+\begin{align*}
+    \hat{\alpha} - \alpha_0 
+    &=\hat{\gamma}'\hat{\gamma} - \gamma_0'\gamma_0\\
+    &= (\gamma_0 + G_n )'(\gamma_0 +G_n) - \gamma_0'\gamma_0 \\
+    &= \gamma_0'\gamma_0 + 2\gamma_0'G_n + G_n'G_n - \gamma_0'\gamma_0 \\
+    &=  2\gamma_0'G_n + G_n'G_n \\
+    &= \frac{2\sqrt{n}\gamma_0'G_n}{\sqrt{n}} + G_n'G_n \tag{$\star$}
+\end{align*}
+Let $Z_n \coloneq 2\gamma_0'G_n\sqrt{n}.$ Note that  $\gamma_0'G_n$ is a linear combination of the components of $G_n.$ Since $G_n \sim \mathcal{N}(0,I_p/n),$ any linear combination of $G_n$ is also normal. In particular, 
+\begin{align*}
+    \gamma_0'G_n \sim \mathcal{N}(0,\gamma_0'\frac{I_p}{n}\gamma_0) = \mathcal{N}(0,1)
+\end{align*}
+since $\gamma_0'\gamma_0 = 1.$ Therefore 
+\begin{align*}
+    \frac{Z_n}{\sqrt{n}} = \frac{2\sqrt{n}\gamma_0'G_n}{\sqrt{n}} = 2\gamma_0'G_n \sim 2\mathcal{N}(0,1) \sim \mathcal{N}(0,4)
+\end{align*}
+Thus, the first term in the expansion $(\star)$ is mean zero and asymptotitcally normal, so it is not the source of any bias. Now, let's consider the quadratic term $G'_nG_n$ Let's decompose this term into a deterministic part (bias) and a remainder part:
+\begin{align*}
+    G_n'G_n = \ev[G_n'G_n ] + (G_n'G_n - \ev[G_n'G_n ])
+\end{align*}
+Since $G_n \sim \mathcal{N}(0,I_p/n)$ we have that $\frac{1}{\sqrt{n}}G_n\sim\mathcal{N}(0,I_p).$ Therefore $nG_nG_n = \frac{1}{\sqrt{n}}G_n\frac{1}{\sqrt{n}}G_n$ is the sum of $p$ independent squared standard normals $\implies nG_nG_n \sim \chi^2_p.$ Thus, 
+\begin{align*}
+    \ev[nG_n'G_n ] = p \implies \ev[G_n'G_n ] = \frac{p}{n}
+\end{align*}
+Thus, 
+\begin{align*}
+    G_n'G_n = \frac{p}{n} + \underbrace{\left(G_n'G_n - \frac{p}{n}\right)}_{=:r_n}
+\end{align*}
+Since $nG_nG_n \sim \chi^2_p$, the central limit theorem as $p \to \infty$ allows us to find the asymptotic distribution of $r_n \coloneq G_n'G_n - \frac{p}{n}:$
+\begin{align*}
+    &\frac{nG_n'G_n - p}{\sqrt{2p}} \overset{a}{\sim} \mathcal{N}(0,1) \\
+    \implies&\frac{nG_n'G_n - p}{\sqrt{p}} \overset{a}{\sim} \mathcal{N}(0,2) \\
+    \implies&r_n = G_n'G_n - \frac{p}{n} \sim\mathcal{N}(0,2)\sqrt{p}/n
+\end{align*}
+Thus, $r_n = O_p(\frac{\sqrt{p}}{n}).$
+
+Putting it all together, we can write the full expansion as:
+\begin{align*}
+    \hat{\alpha} - \alpha_0 = \underbrace{\frac{Z_n}{\sqrt{n}}}_{\mathcal{N}(0,4/n)} + \underbrace{\frac{p}{n}}_{\text{bias}} + \underbrace{r_n}_{O_p(\sqrt{p}/n)}
+\end{align*}
+where $Z_n \sim \mathcal{N}(0,4)$, the bias term is $b/n = p/n$, and $r_n = O_p(\sqrt{p}/n)$. To assess when the normal approximation $\sqrt{n}(\hat{\alpha} - \alpha_0) \overset{a}{\sim} \mathcal{N}(0,4)$ is valid, rescale by $\sqrt{n}$:
+\begin{align*}
+    \sqrt{n}(\hat{\alpha} - \alpha_0) = \underbrace{Z_n}_{\mathcal{N}(0,4)} + \underbrace{\frac{p}{\sqrt{n}}}_{\sqrt{n} \cdot \text{bias}} + \underbrace{O_p\!\left(\frac{\sqrt{p}}{\sqrt{n}}\right)}_{\sqrt{n}\cdot r_n}
+\end{align*}
+For the normal approximation to hold, both the bias term and the remainder must vanish asymptotically:
+\begin{align*}
+    \frac{p}{\sqrt{n}} \to 0 \iff \frac{p^2}{n} \to 0 \qquad \text{(binding constraint)}\\
+    \frac{\sqrt{p}}{\sqrt{n}} \to 0 \iff \frac{p}{n} \to 0 \qquad \text{(weaker condition)}
+\end{align*}
+The bias term is the binding constraint. The source of the bias is the nonlinearity of the plug-in estimator $\hat{\alpha} = \hat{\gamma}'\hat{\gamma}$: even though each component of $\hat{\gamma}$ is unbiased for the corresponding component of $\gamma_0$, squaring and summing across all $p$ dimensions accumulates the estimation variance into a systematic upward shift of size $p/n$. Each of the $p$ dimensions contributes a bias of $1/n$, so the total bias grows with the dimension. When $p$ is small relative to $n$ this is negligible, but as $p$ grows the accumulated bias becomes non-negligible relative to the $1/\sqrt{n}$ standard deviation of the estimator, invalidating the standard normal approximation even if $\hat{\alpha}$ remains consistent.
 \end{solution}
 
 
