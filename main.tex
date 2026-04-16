@@ -190,7 +190,7 @@ The bias term is the binding constraint. The source of the bias is the nonlinear
 
 
 
-\begin{problem}{10.2 }
+\begin{problem}{10.2}
 Replicate (approximately) the empirical results of Table 10.1
 using standard software such as R or Stata. [Note that you
 will not be able to replicate exactly the split-sample bias corrections
@@ -198,7 +198,22 @@ and bootstrap standard errors because they depend
 on the software and random seed used.]
 \end{problem}
 
-\begin{solution}{}
+\begin{solution}{10.2}
+We present results using the provided code in the table below. The sample contains $n=147$ countries and $T=18$ years for both GMM1 and GMM2. The GMM1 model is the Anderson-Hsiao estimator, which uses fewer moment conditions ($m=200$), while GMM2 is the Arellano-Bond estimator that takes advantage of all restrictions implied by sequential exogeneity, so $m=632$. There are $p=169$ parameters, with parameters of interest being coefficients on democracy and the lags of GDP (the dependent variable), and incidental parameters being country and time effects. As a result, $m^2/n$ (which is the likely bottleneck) is large for in GMM1 and very large in GMM2, and we need to worry about bias due to dimensionality.
+
+For each model, we show three columns: the raw outputs without bias correction, the bias-corrected estimates (BC) which use a single sample split, and BC5 which averages over 5 random sample splits.
+
+The CSE rows report analytical standard errors of the GMM estimators clustered at the country level, while BSE rows report standard errors from a bootstrap with 500 repetitions.
+
+Finally, the last section computes the long-run effects on GDP of a transition to democracy, not estimated directly but computed as a transformation of the other coefficients.
+
+\begin{center}
+    \include{outputs/democracy_results}
+\end{center}
+
+The results show that the bias corrections meaningfully change the estimates, particularly for GMM2, which likely suffers from a larger bias problem. At the same time, the bootstrap standard errors largely go up for the bias-corrected estimates, and are by-and-large larger than analytical standard errors, which suggests that analytical SEs might not be capturing the additional errors introduced by estimation in a small $T$ (relative to $n$) panel.
+
+The estimates of long-run effects obtained from GMM1 are larger, but are also much less precisely estimated, highlighting the increase in statistical power from using more over-identifying restrictions in GMM2. The bias-corrected GMM2 estimate suggests that a permanent transition to democracy raises GDP by $~20\%$
 
 \end{solution}
 
